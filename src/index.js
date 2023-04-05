@@ -63,8 +63,12 @@ async function pixabay(name, page) {
 
     createMarkup(response.data);
   } catch (error) {
-    console.log(error);
+    handlePixabayError(error);
   }
+}
+
+function handlePixabayError(error) {
+  console.log(error);
 }
 
 function createMarkup(arr) {
