@@ -16,7 +16,7 @@ refs.btnLoadMore.style.display = 'none';
 refs.form.addEventListener('submit', onSearch);
 refs.btnLoadMore.addEventListener('click', onBtnLoadMore);
 
-function onSearch(evt) {
+async function onSearch(evt) {
   evt.preventDefault();
 
   page = 1;
@@ -25,7 +25,13 @@ function onSearch(evt) {
   const name = refs.input.value.trim();
 
   if (name !== '') {
-    pixabay(name);
+    try {
+      const response = await pixabay(name);
+      notification(response.data.hits.length, response.data.total);
+      createMarkup(response.data);
+    } catch (error) {
+      console.log(error.message);
+    }
   } else {
     refs.btnLoadMore.style.display = 'none';
 
@@ -34,41 +40,6 @@ function onSearch(evt) {
     );
   }
 }
-
-// function onBtnLoadMore() {
-//   const name = refs.input.value.trim();
-//   page += 1;
-//   pixabay(name, page);
-// }
-
-// async function pixabay(name, page) {
-//   const API_URL = 'https://pixabay.com/api/';
-
-//   const options = {
-//     params: {
-//       key: '33717102-715c10c4f2cae8a60768f134f',
-//       q: name,
-//       image_type: 'photo',
-//       orientation: 'horizontal',
-//       safesearch: 'true',
-//       page: page,
-//       per_page: 40,
-//     },
-//   };
-
-//   try {
-//     const response = await axios.get(API_URL, options);
-
-//     notification(
-//       response.data.hits.length,
-//       response.data.total
-//     );
-
-//     createMarkup(response.data);
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
 
 async function pixabay(name, page) {
   const API_URL = 'https://pixabay.com/api/';
@@ -103,7 +74,6 @@ function onBtnLoadMore() {
     createMarkup(data);
   });
 }
-
 
 function createMarkup(arr) {
   const markup = arr.hits
